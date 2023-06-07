@@ -1,6 +1,7 @@
 package sendtables2
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -316,7 +317,10 @@ func readFieldPaths(r *reader) []*fieldPath {
 	for !fp.done {
 		var next huffmanTree
 
-		if r.readBits(1) == 1 {
+		rightNode := r.readBits(1)
+
+		// fmt.Println("rightNode", rightNode)
+		if rightNode == 1 {
 			next = node.Right()
 		} else {
 			next = node.Left()
@@ -324,7 +328,9 @@ func readFieldPaths(r *reader) []*fieldPath {
 
 		if next.IsLeaf() {
 			node = huffTree
-			fieldPathTable[next.Value()].fn(r, fp)
+			value := next.Value()
+			fmt.Println("next value", value)
+			fieldPathTable[value].fn(r, fp)
 			if !fp.done {
 				paths = append(paths, fp.copy())
 			}
